@@ -14,7 +14,6 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument('-i', '--ip', required=True, help='IP address to scan')
-parser.add_argument('-o', '--output', type=argparse.FileType('w'), help='Directs the output to a name of your choice.')
 parser.add_argument('-n', '--nmap', action='store_true', help='Use nmap scan after discovering ports, outputting the results.')
 args = parser.parse_args()
 print(f"IP to scan: {args.ip}")
@@ -61,9 +60,19 @@ def main():
         print("Performing Nmap scan")
         nmap_ports = ','.join(ports_found)
         nmap_scan = subprocess.run(['nmap', '-A', '-vvv', 'p', nmap_ports, args.ip], capture_output=True, text=True)
-        if args.output:
-            args.output.write(nmap_scan.stdout)
-            args.output.close()
+        while True:
+            nmap_output = input("Do you want to write to output? (Y/N): ")
+            if nmap_output.upper() == "Y":
+                with open("portscan.txt", "w", encoding="utf-8") as f:
+                    print("Writing nmap scan result to output...")
+                    f.write(nmap_scan.stdout)
+                    break
+                continue
+            elif nmap_output.upper() == "N":
+                print("Not writing to output.")
+                break
+            else:
+                print("Do you want to write to output? (Y/N): ")
         print("Nmap output:\n", nmap_scan.stdout)  
                
 if __name__ == '__main__':
