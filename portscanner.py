@@ -59,7 +59,7 @@ def main():
     if args.nmap:
         print("Performing Nmap scan")
         nmap_ports = ','.join(ports_found)
-        nmap_cmd = ['nmap', '-A', '-vvv', 'p', nmap_ports, args.ip]
+        nmap_cmd = ['nmap', '-A', '-vvv', '-p', nmap_ports, args.ip]
         while True:
             nmap_output = input(f"Do you want to save the output? (Y/N): ")
             if nmap_output.upper() == "Y":
