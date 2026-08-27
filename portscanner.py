@@ -59,21 +59,26 @@ def main():
     if args.nmap:
         print("Performing Nmap scan")
         nmap_ports = ','.join(ports_found)
-        nmap_scan = subprocess.run(['nmap', '-A', '-vvv', 'p', nmap_ports, args.ip], capture_output=True, text=True)
+        nmap_cmd = ['nmap', '-A', '-vvv', 'p', nmap_ports, args.ip]
         while True:
-            nmap_output = input("Do you want to write to output? (Y/N): ")
+            nmap_output = input(f"Do you want to save the output? (Y/N): ")
             if nmap_output.upper() == "Y":
-                with open("portscan.txt", "w", encoding="utf-8") as f:
-                    print("Writing nmap scan result to output...")
-                    f.write(nmap_scan.stdout)
-                    break
-                continue
+                file_path = input("Name and directory of file (or press Enter for default): ")
+                print("Output saved to: ", file_path)
+                if not file_path.strip():
+                    file_path = 'portscan'
+                nmap_cmd.extend(['-oA', file_path])
+                print(f"Nmap result will be saved to: {file_path}")
+                break
             elif nmap_output.upper() == "N":
                 print("Not writing to output.")
                 break
             else:
-                print("Do you want to write to output? (Y/N): ")
-        print("Nmap output:\n", nmap_scan.stdout)  
+                print("Invalid input. Please enter Y or N.")
+        nmap_scan = subprocess.run(nmap_cmd, capture_output=True, text=True)
+        print("Nmap output:\n", nmap_scan.stdout)
+       
+        
                
 if __name__ == '__main__':
     try:
